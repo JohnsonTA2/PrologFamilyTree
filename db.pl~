@@ -1,0 +1,121 @@
+child(baelon, daemon).
+child(baelon, viserysI).
+child(viserysI, aegonII).
+child(viserysI, helaena).
+child(viserysI, aemond).
+child(viserysI, daeron).
+child(viserysI, rhaenyra).
+child(rhaenyra, jacaerys).
+child(rhaenyra, lucerys).
+child(rhaenyra, joffrey).
+child(rhaenyra, viserysII).
+child(rhaenyra, aegonIII).
+child(aegonIII, daeronI).
+child(aegonIII, baelor).
+child(aegonIII, daena).
+child(aegonIII, rhaena).
+child(aegonIII, elaena).
+child(viserysII, aegonIV).
+child(viserysII, aemon).
+child(viserysII, naerys).
+child(aegonII, jaehaerys).
+child(aegonII, jaehaera).
+child(aegonII, maelor).
+child(aegonIV, daeronII).
+child(aegonIV, daenerys).
+child(daeronII, aerysI).
+child(daena, daemonBlackfyre).
+child(daemonBlackfyre, aenysBlackfyre).
+child(daemonBlackfyre, haegonBlackfyre).
+child(daemonBlackfyre, daemonIIBlackfyre).
+child(daemonBlackfyre, aegonBlackfyre).
+child(daemonBlackfyre, aemonBlackfyre).
+
+age(baelon, 138).
+age(viserysI, 118).
+age(daemon, 114).
+age(aegonII, 88).
+age(helaena, 86).
+age(aemond, 85).
+age(daeron, 81).
+age(rhaenyra, 98).
+age(jacaerys, 81).
+age(lucerys, 80).
+age(joffrey, 78).
+age(viserysII, 73).
+age(aegonIII, 75).
+age(daeronI, 52).
+age(baelor, 51).
+age(daena, 50).
+age(rhaena, 48).
+age(elaena, 45).
+age(aegonIV, 60).
+age(daeronII, 42).
+age(daenerys, 23).
+age(naerys, 57).
+age(aemon, 59).
+age(jaehaerys, 73).
+age(jaehaera, 72).
+age(maelor, 68).
+age(aerysI, 24).
+age(daemonBlackfire, 25).
+age(aenysBlackfire, 4).
+age(haegonBlackfyre, 5).
+age(daemonIIBlackfyre, 6).
+age(aegonBlackfyre, 11).
+age(aemonBlackfyre, 12).
+
+
+
+
+age_comp(P, C1, C2) :- age(C1, A1), age(C2, A2), compare(P, A2, A1).
+
+kthchild(P,C,K):- findall(C, child(P, C), Children),
+    predsort(age_comp, Children, SortedChildren),
+    nth1(K, SortedChildren, C).
+
+parent(C,P):-
+    child(P,C).
+
+sibling(C1, C2):-
+    parent(C1, P),
+    child(P, C2),
+    not(C1=C2).
+
+grandparent(C, G):-
+    parent(C,P),
+    parent(P, G).
+
+findNthParent(C1,P1,1):-
+   parent(C1,P1).
+
+findNthParent(C1, P1,N):-
+    NewN is N-1,
+    NewN > 0,
+    parent(C1, NewP),
+    findNthParent(NewP, P1, NewN).
+
+findNthChild(C1, P1, 1):-
+    child(P1, C1).
+
+findNthChild(C1, P1, N):-
+    NewN is N - 1,
+    NewN > 0,
+    child(P1, NewC),
+    findNthChild(C1, NewC, NewN).
+
+nthcousin(C1, C2, N):-
+    findNthParent(C1,P1,N),
+    findNthParent(C2,P2,N),
+    sibling(P1,P2).
+
+nthcousinkremoved(C1, C2, N, K):-
+    N > K,
+    nthcousin(C1, X, N),
+    findNthChild(C2, X, K).
+
+
+
+
+
+
